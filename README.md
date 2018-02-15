@@ -1,62 +1,14 @@
 # Nextcloud for OpenShift 3
 
 This repository contains an OpenShift 3 template to easily deploy Nextcloud on OpenShift.
-With this template it's possible to run your own Nextcloud instance f.e. on [APPUiO](https://appuio.ch/).
+With this template it's possible that your customer can create one or more nextcloud instances in her namespace.
 
 ## Installation
 
-### 0 Create OpenShift project
+* oc login to your cluster with clusteradmin permissions
+* oc create -f nextcloud.yaml -n openshift
 
-Create an OpenShift project if not already provided by the service
-
-```
-PROJECT=nextcloud
-oc new-project $PROJECT
-```
-
-### 1 Deploy Database
-
-```
-oc -n openshift process mariadb-persistent -p MYSQL_DATABASE=nextcloud | oc -n $PROJECT create -f -
-```
-
-### 2 Deploy Nextcloud
-
-```
-oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master/nextcloud.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc -n $PROJECT create -f -
-```
-
-#### Template parameters
-
-Execute the following command to get the available parameters:
-
-```
-oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master/nextcloud.yaml --parameters
-```
-
-### 3 Configure Nextcloud
-
-* Navigate to http://nextcloud.example.com
-* Fill in the form and finish the installation. The DB credentials can be 
-  found in the secret `mariadb`. In the Webconsole it can be found under
-  `Resources -> Secrets -> mariadb -> Reveal Secret`
-
-**Hints**
-
-* You might want to enable TLS for your instance
-
-## Backup
-
-### Database
-
-You can use the provided DB dump `CronJob` template:
-
-```
-oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master/mariadb-backup.yaml | oc -n MYNAMESPACE create -f -
-```
-
-This script dumps the DB to the same PV as the database stores it's data.
-You must make sure that you copy these files away to a real backup location.
+after this, you should see a nextcloud template in you catalog in every namespace
 
 ### Files
 
